@@ -5,6 +5,9 @@ const router = express.Router();
 
 router.get('/results', (req, res) => {
   const doctor = req.query.doctor;
+  const city = req.query.city;
+  const category = req.query.category;
+  console.log(category, city, doctor);
   const result = [];
   console.log(doctor);
 
@@ -14,16 +17,25 @@ router.get('/results', (req, res) => {
       body: {
         size: 300,
         query: {
-            bool: {
-              must: {
-                term: { isEmailVerified: true },
+          bool: {
+            must: [{
+              term: { status: 'approved' },
+                // term: { firstName: { query: doctor } },
+            }],
+            filter: [
+              {
+                // term: { firstName: doctor  },
+                match: { clinicCity: { query: city } },
+                match: { specialization: { query: category } },
               },
-              filter: [
-                {
-                  match: { firstName: { query: doctor } },
-                },
-              ]
-            },
+              // {
+              //   multi_match: {
+              //     query: '*',
+              //     fields: ['firstName', 'clinicCity', 'specialization'],
+              //   },
+              // },
+            ],
+          },
         },
       },
     });

@@ -37,7 +37,8 @@ router.get('/doctors', async function (req, res) {
               email: results.email,
               isEmailVerified: results.isEmailVerified,
               clinicName: results.clinicName,
-              clinicAddress: results.clinicAddress,
+              clinicAddress1: results.clinicAddress1,
+              clinicAddress2: results.clinicAddress2,
               yearsOfExperience: results.yearsOfExperience,
               clinicContactNo: results.clinicContactNo,
               clinicEmail: results.clinicEmail,
@@ -45,6 +46,12 @@ router.get('/doctors', async function (req, res) {
               status: results.status,
               endTime: results.endTime,
               startTime: results.startTime,
+              specialization: results.specialization,
+              clinicCity: results.clinicCity,
+              profileURL:results.profileURL,
+              mobile:results.mobile,
+              clinicState: results.clinicState,
+              clinicPincode: results.clinicPincode
             }),
             await client.index({
               index: 'doctors',

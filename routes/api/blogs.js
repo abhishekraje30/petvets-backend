@@ -3,16 +3,17 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 
+const Blog = require('../../models/blog.model');
+
 router.get('/', async (req, res) => {
   let datas = [];
 
   request(
-    `https://www.animalhearted.com/blogs/animal-blog`,
-    (err, response, html) => {
+    `https://www.animalhearted.com/blogs/animal-blog`, (err, response, html) => {
       if (response.statusCode === 200) {
         const $ = cheerio.load(html);
 
-        $('.blog--inner li').each((i, el) => {
+        $('.blog--inner li').each(async (i, el) => {
           const title = $(el)
             .find('.article--excerpt-title')
             .find('a')
@@ -31,14 +32,26 @@ router.get('/', async (req, res) => {
             image,
             link
           };
-          datas.push(data);
+          const blog = new Blog(data);
+          await blog.save()
         });
       }
-
-      res.status(200).json(datas);
+      res.status(200).json({msg: "scrapped"});
     }
   );
 });
+
+router.get('/allBlogs', async (req, res) => {
+    const blogs = await Blog.find().lean();
+    res.status(200).json(blogs);
+})
+
+router.get('/allBlogs/:id', async (req, res) => {
+    const id = req.params.id;
+    const blogs = await Blog.findOne({_id: id}).lean();
+    res.status(200).json(blogs);
+})
+
 
 router.get('/blogDetail', async (req, res) => {
   let datas = [];
@@ -50,14 +63,6 @@ router.get('/blogDetail', async (req, res) => {
       if (response.statusCode === 200) {
         const $ = cheerio.load(html);
         const content = $('.article--inner .article--content').html();
-        const title = $('.article--inner').find('h1').text().split(' \n')
-        .map(function (item) {
-          return item.trim();
-        })[0];
-        let response = {
-            content, 
-            title
-        }
         datas.push(content);
 
         res.status(200).json(datas);

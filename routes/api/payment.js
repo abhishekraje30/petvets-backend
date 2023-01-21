@@ -45,9 +45,9 @@ router.post('/', (req, res) => {
             customer: customer.id
           });
         })
-        .then((charge) => {
-          console.log('success', charge)
-          data.paymentStatus = "succeeded"
+        .then(async (charge) => {
+          await Appointment.findOneAndUpdate({ _id: appointment._id }, { $set: {paymentStatus:'succeeded', userId:user.userId, vetId:doctor.userId} });
+          
           res.status(200).json({ 'status': true, 'msg': 'Success' });
         })
         .catch(async (err) => {
