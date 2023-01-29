@@ -9,9 +9,8 @@ router.get('/results', async (req, res) => {
   const doctor = req.query.doctor;
   const city = req.query.city;
   const category = req.query.category;
-  console.log(category, city, doctor);
   let users = [];
-  // const result = [];
+
   if (category && city) {
     users = await User.find({
       role: 'doctor',
@@ -61,8 +60,11 @@ router.get('/results', async (req, res) => {
       ],
     }).lean();
   }
-
-  res.status(200).json(users);
+  const result = {
+    user: users,
+    totalPages: Math.floor(users.length/9)
+  }
+  res.status(200).json(result);
   // async function sendESRequest() {
   //   const body = await client.search({
   //     index: 'doctors',

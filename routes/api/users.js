@@ -5,22 +5,14 @@ const User = require('../../models/users.model');
 
 router.get('/', async (req, res) => {
   let role = req.query.role;
-  let category = req.query.category;
+  const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
+  const page = req.query.page ? parseInt(req.query.page) : 0;
   try {
-    if (role && category) {
-      const users = await User.find({
-        role: role,
-        status: 'approved',
-        specialization: category,
-      }).lean();
-      res.status(200).json(users);
-    } else if (role && !category) {
-      const users = await User.find({ role: role, status: 'approved' }).lean();
-      res.status(200).json(users);
-    } else {
-      const users = await User.find({ role: role }).lean();
-      res.status(200).json(users);
+    const result = {
+      user: await User.find({ role: role }).limit(pageSize).skip(pageSize * page).lean(),
+      totalPages : pageSize ? Math.floor(await User.find({ role: role }).count()/pageSize) : 0
     }
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error });
   }
