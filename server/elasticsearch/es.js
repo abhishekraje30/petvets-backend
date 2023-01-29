@@ -9,6 +9,7 @@ router.get('/results', async (req, res) => {
   const doctor = req.query.doctor;
   const city = req.query.city;
   const category = req.query.category;
+  const page = req.query.page;
   let users = [];
 
   if (category && city) {
@@ -19,7 +20,7 @@ router.get('/results', async (req, res) => {
         { specialization: category },
         { clinicCity: city }
       ],
-    }).lean();
+    }).limit(9).skip(9 * page).lean();
   } else if (doctor && city) {
     users = await User.find({
       role: 'doctor',
@@ -28,7 +29,7 @@ router.get('/results', async (req, res) => {
         { firstName: doctor },
         { clinicCity: city }
       ],
-    }).lean();
+    }).limit(9).skip(9 * page).lean();
   } else if (doctor && category) {
     users = await User.find({
       role: 'doctor',
@@ -37,7 +38,7 @@ router.get('/results', async (req, res) => {
         { firstName: doctor },
         { specialization: category }
       ],
-    }).lean();
+    }).limit(9).skip(9 * page).lean();
   } else if (doctor && category && city) {
     users = await User.find({
       role: 'doctor',
@@ -47,7 +48,7 @@ router.get('/results', async (req, res) => {
         { specialization: category },
         { clinicCity: city }
       ],
-    }).lean();
+    }).limit(9).skip(9 * page).lean();
   } 
   else {
     users = await User.find({
@@ -58,7 +59,7 @@ router.get('/results', async (req, res) => {
         { clinicCity: city },
         { firstName: doctor },
       ],
-    }).lean();
+    }).limit(9).skip(9 * page).lean();
   }
   const result = {
     user: users,
