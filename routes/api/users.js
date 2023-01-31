@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
   try {
     const result = {
       user: await User.find({ role: role }).limit(pageSize).skip(pageSize * page).lean(),
-      totalPages : pageSize ? Math.floor(await User.find({ role: role }).count()/pageSize) : 0
+      totalPages : pageSize ? Math.ceil(await User.find({ role: role }).count()/pageSize) : 0
     }
     res.status(200).json(result);
   } catch (error) {
